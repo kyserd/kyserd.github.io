@@ -1,0 +1,87 @@
+---
+.title = "XOR Strings in Zig",
+.date = @date("2025-06-01T00:00:00"),
+.author = "kyserd",
+.layout = "post.shtml",
+.draft = false,
+---
+
+XOR strings are a common form of encrypted strings that can be found in binaries.
+Given how easy it is to dump plaintext strings from file (i.e. the strings command),
+obfuscating them can be a worthwhile goal.
+
+The crux of the issue is that the obsfuscation needs to be done at compile time.
+In the Rust [obfstr](https://github.com/CasualX/obfstr) crate this is done through macros,
+and in C++ it was done through constexpr.
+
+This seemed like a perfect usecase for Zig's `comptime`. I only had a few requirements,
+
+> 1. Reproducible: Obfuscating the same bytes should produce the same result, i.e. a mapping.
+>
+> 2. The key used the obfuscate the strings should not be hardcoded. (Why? I felt like it).
+
+
+## Full Code
+```zig
+const std = @import("std");
+
+pub fn Encrypted(bytes: comptime_int) type {
+    return struct {
+        buffer: [bytes]u8,
+        hash: u64,
+
+        const Self = @This();
+
+        fn get_key(hash: u64) [bytes]u8 {
+            var key = [_]u8{0} ** bytes;
+            var rng = std.Random.DefaultPrng.init(hash);
+            const random = rng.random();
+            std.Random.bytes(random, &key);
+            return key;
+        }
+
+        pub fn init(comptime string: []const u8) Self {
+            if (string.len != bytes) {
+                @compileError("String length must match byte length!");
+            }
+            const hash = std.hash.Fnv1a_64.hash(string);
+            const key = get_key(hash);
+            comptime var self: Self = undefined;
+            self.hash = hash;
+
+            for (key, string, &self.buffer) |k, s, *v| {
+                v.* = k ^ s;
+            }
+            return self;
+        }
+
+        pub fn decrypt(self: *const Self, buffer: *[bytes]u8) void {
+            if (@inComptime()) {
+                @compileError("decrypt should not be comptime evaluated");
+            }
+
+            // This is to stump the llvm optimizer
+            const offset_b = @offsetOf(Self, "buffer");
+            const offset_h = @offsetOf(Self, "hash");
+
+            var ptr = @as(usize, @intFromPtr(self));
+            ptr += offset_b;
+
+            const b = @as(*const @TypeOf(self.buffer), @ptrFromInt(ptr));
+            ptr += offset_h;
+            ptr -= offset_b;
+            const h = @as(*const @TypeOf(self.hash), @ptrFromInt(ptr));
+
+            const key = get_key(h.*);
+
+            for (key, b, buffer) |k, s, *v| {
+                v.* = k ^ s;
+            }
+        }
+    };
+}
+
+pub fn encrypted(comptime string: []const u8) Encrypted(string.len) {
+    return Encrypted(string.len).init(string);
+}
+```

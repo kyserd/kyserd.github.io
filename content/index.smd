@@ -8,7 +8,7 @@
 
 This is my website where I can post things that I find interesting,
 or just my own thoughts. Though the postings will be almost entirely tech
-related, as this is far from a "personal" website.
+related.
 
 A quick overview of the site:
  - [Blog](/blog/): A collection of posts about assorted topics.
@@ -20,6 +20,5 @@ A quick overview of the site:
 ### [Unholy C](https://github.com/JBourds/unholy_c)
 A compiler for a subset of C17 created while reading Nora Sandler's
 [Writing a C Compiler](https://norasandler.com/2024/08/20/The-Book-Is-Here.html).
-
 
 The natural complement to Holy C. What makes it unholy? Well, it's C.
