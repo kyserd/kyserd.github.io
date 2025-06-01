@@ -1,0 +1,32 @@
+---
+.title = "Hardening Firefox",
+.date = @date("2025-05-10T00:00:00"),
+.author = "kyserd",
+.layout = "post.shtml",
+.draft = false,
+---
+
+I've used Firefox as a web browser for the longest time. But in the recent
+year there have been a few contriversies surronding Mozilla and their policy
+around advertising and selling personal data. Some people suggest that Firefox
+is no longer worth using, maybe, but its what I use currently. But I've decided
+to at least try to somewhat harden my installation.
+
+Now I've seen suggestions that one could switch to a more privacy focused browser,
+some of the names I've seen are LibreFox, WaterFox, and Floorp, which are all Firefox
+derivatives. However, since I already use identifiying features like Firefox sync, I'm
+not to keen to immediately switch to a browser that would break my current Firefox setup.
+For non-Firefox alternatives, I find them less compelling, I've seen Brave come up a few
+times but given their [troubled history](https://www.reddit.com/r/browsers/comments/1j1pq7b/list_of_brave_browser_controversies/)
+I'm not particularly interested in trying.
+
+In the end one must decide where their boundry in terms of privacy, useability, and security lies.
+In terms of mainstream browsers, there's not one that I know of that doesn't have some form of
+problem. Firefox stands for a lot of good things and getting tracked by them for advertising
+purposes isn't the absolute worst thing in the world. I'm not happy with it and in a better world
+I wouldn't need to make the tradeoff, but when I use an android device, gmail, and google maps on the daily,
+I've already traded part of my privacy in exchange for convenience.
+
+But that doesn't mean that I shouldn't try to improve my privacy.
+
+[Wiki Page](/wiki/firefox/)

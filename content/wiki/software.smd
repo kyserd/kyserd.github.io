@@ -1,0 +1,33 @@
+---
+.title = "Software I Use",
+.date = @date("2025-05-30T00:00:00"),
+.author = "kyserd",
+.layout = "post.shtml",
+.draft = false,
+---
+
+I use a lot of software and it helps to keep it mostly
+consistant among development environments. This is not
+comprehensive and has signficant overlap with my [Void Install](/wiki/void-install).
+
+## Programming
+* editor: helix
+* ssh-agent: keychain
+
+## System
+* shell: fish
+* window manager: sway
+* terminal: foot (switch to ghostty?)
+* font: Iosevka
+* audio: pipewire
+* flatpak
+
+### Sway stuff
+* launcher: wofi
+* display: kanshi
+* status-bar: i3status-rust
+* login manager: greetd using gtkgreet
+
+### Games
+* PrismLauncher (Flatpak)
+* Steam: [Install Instructions](https://docs.voidlinux.org/config/external-applications.html#steam)

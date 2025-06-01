@@ -1,10 +1,29 @@
 ---
-.title = "Homepage",
-.date = @date("1990-01-01T00:00:00"),
-.author = "Sample Author",
+.title = "Welcome to my website!",
+.date = @date("2025-05-05T00:00:00"),
+.author = "kyserd",
 .layout = "index.shtml",
 .draft = false,
 --- 
+
+This is my website where I can post things that I find interesting,
+or just my own thoughts. Though the postings will be almost entirely tech
+related, as this is far from a "personal" website.
+
+A quick overview of the site:
+ - [Blog](/blog/): A collection of posts about assorted topics.
+ - [Wiki](/wiki/): My collection of notes and reminders.
+ - [Notes](/notes/): Shorter posts that don't warrent their own entries.
+
+## Projects
+
+### [Unholy C](https://github.com/JBourds/unholy_c)
+A compiler for a subset of C17 created while reading Nora Sandler's
+[Writing a C Compiler](https://norasandler.com/2024/08/20/The-Book-Is-Here.html).
+
+
+The natural complement to Holy C. What makes it unholy? Well, it's C.
+
 
 This sample website showcases:
 
@@ -70,7 +89,6 @@ HTML markup in Zine is defined via SuperHTML templates:
 changes you make will be picked up immediately, causing the website to rebuild
 and the page in your browser to refresh**.
 
-You can learn more about SuperMD and SuperHTML in [/about/](/about/).
 
 Lastly, this sample website also includes the following asset files:
 

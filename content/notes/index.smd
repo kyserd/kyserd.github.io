@@ -1,0 +1,16 @@
+---
+.title = "Notes Archive",
+.date = @date("1990-01-01T00:00:00"),
+.author = "kyserd",
+.layout = "notes-archive.shtml",
+.alternatives = [{ 
+    .name = "rss",
+    .layout = "notes.xml", 
+    .output = "index.xml",
+}],
+.draft = false,
+--- 
+
+This page lists all the years of notes that are present on this site.
+
+The current year notes page is also available [via RSS feed]($link.alternative('rss')).

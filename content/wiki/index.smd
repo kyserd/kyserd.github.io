@@ -1,0 +1,18 @@
+---
+.title = "Wiki",
+.date = @date("2025-05-05T00:00:00"),
+.author = "kyserd",
+.layout = "wiki.shtml",
+.draft = false,
+---
+
+I would hesitate to call these assorted writings tutorials. They are more so a
+way for me to write down the steps and decisions I make when installing something,
+helpful links I come across, or how I fix things.
+
+Too often I forget exactly how I manged to do something and then can't recreate it.
+While not offering the same reproducibility of something like NixOS, the hope is
+that my setup becomes more consistant across all my different computers and is
+easier to keep organized.
+
+As always, these "tutorials" come with absolutely no warrenty of any kind.

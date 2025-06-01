@@ -1,0 +1,50 @@
+---
+.title = "File Layout",
+.date = @date("2025-05-30T00:00:00"),
+.author = "kyserd",
+.layout = "post.shtml",
+.draft = false,
+---
+
+Where to place files: the guide.
+
+## Root directory
+
+### /opt/
+There is some software out there (for example Vivado) that greatly prefers to be installed
+in its desired location, usually /opt/. Even though it requires root permission software
+thats wants to go in /opt/ gets to go in /opt/.
+
+## Home Directory
+
+### ~/dev/
+For your development needs and git repos.
+
+#### ~/dev/external/
+
+This is where projects that you didn't create and don't plan
+to contribute to should go.
+
+### ~/.config/
+Config file locations. If they must they can go in ~/ but stuffing
+them into ~/.config/ is preferred.
+
+
+### ~/.local/
+
+Pretend be local root directory almost.
+
+#### ~/.local/appimages/
+If you need to install an appimage this is where it should go.
+
+#### ~/.local/bin/
+#### ~/.local/pkgs/
+Software pulled out of tree that is installed on the system.
+The difference between this and ~/.local/opt/ is that only
+the software package (source) should be here, no executables.
+
+#### ~/.local/opt/
+Tarballed software (not built from source) that needs to install in
+its own designated folder with file structure. Many games go in here
+along with software like Ghidra.
+  

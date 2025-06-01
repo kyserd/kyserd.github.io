@@ -1,0 +1,231 @@
+---
+.title = "Void Linux Install",
+.date = @date("2025-05-30T00:00:00"),
+.author = "kyserd",
+.layout = "post.shtml",
+.draft = false,
+---
+
+A recollection of how I install void-linux on my machines
+
+Follow the guide `https://docs.voidlinux.org/installation/index.html` unless otherwise noted.
+So when it says 'check guide' it means here.
+
+## Install
+Run `void-installer` as root
+
+* Keyboard: us
+* Network: whatever you have
+* Source: network (use local if you want xfce installed)
+* Mirror: closest tier 1
+* Hostname: void
+* Locale: en_US
+* Timezone: wherever you are
+* RootPassword: temporary password (will be removed after install)
+* Useraccount: self explanatory
+* Partition: efi partition 200M-1G along with a single root parition `/` and swap partition if needed (refer to install guide)
+* Filesystem: efi partition (vfat at /boot/efi), root partition (ext4 at /), swap is swap
+
+Afterwards run the install
+
+## Post install
+In order to run systems update, make sure `dhcpcd` service is running (its probably not)
+To start it
+```
+  # ln -s /etc/sv/dhcpcd /var/service/
+  # sv start dhcpcd
+```
+
+Afterwards preform a system update (If you used network source this probaly wouldn't do anything)
+```
+  # xbps-install -Su
+```
+
+If you have no connection (no ethernet) you can use wpa directly
+First, find your device name (like `wlan0`), by executing
+```
+  $ ip link
+```
+Start `wpa-supplicant`, but change `wlan0` to your device name
+```
+  # bash -c 'wpa_supplicant -B -i wlan0 -c <(wpa_passphrase MYSSID passphrase)'
+```
+You may also need to add a nameserver to `/etc/resolv.conf` of somehow fix this file
+cause it was empty when I recently tried to install
+
+Then enable the service:
+```
+  # ln -s /etc/sv/wpa_supplicant /var/service/
+```
+
+Next disable the root account (must be logged in as user to do this):
+
+Check if the account is disabled
+```
+  # passwd -S root 
+```
+This will display `P` if unlocked and `L` for locked
+
+Next remove the password and lock the account
+```
+  # passwd -d root
+  # passwd -l root
+```
+
+Now you have a 'functioning' system you can start using it
+
+## Setting up configs PART 1
+
+Now its time to start installing software (to use).
+Basically pick and choose from these lists and install with
+```
+  # xbps-install -s <pkg1> <pkg2> ...
+```
+
+### Functionality
+These packages I will install on basically every system
+for my basic shell and editor
+* fish-shell
+* helix
+
+### TTY
+* terminus-font
+* tmux
+
+Edit `/etc/rc.conf` and change `FONT="..."` to `FONT="ter-u32b"`
+where the number is the size of the font
+
+## Setting up configs PART 2
+After getting a slightly more functional system running, its your
+job to go through the void docs `Configuration` chapter (3) and follow
+along with things you need. I list my stuff down here.
+
+### Users and Groups
+Edit the sudoers file and uncomment `#%wheel ALL=(ALL) ALL` to create a superuser
+```
+  # visudo
+```
+
+### Date and Time
+* chrony
+I personally install `chrony` cause it seems to be more accurate.
+Enable the service with:
+```
+  # ln -s /etc/sv/chronyd /var/service
+```
+
+### Power Managment
+* tlp (if laptop)
+
+### Network
+* iwd?
+* wpa?
+* connman?
+
+I've used wpa in the past since it seems to come installed on the system, but maybe its not the best choice.
+I really have no idea, just read the docs and choose one that
+works.
+
+### Session, seat managment, and more
+* dbus
+* elogind (will conflict with acpid if using local install)
+* polkit
+* gvfs (needed for filesystem discovery to work)
+* gvfs-mtp
+
+Enable the dbus and polkit(d) services
+
+## Setting up configs PART 3
+Now its time to install the window manger/de of your choosing
+The X11 instructions are the ones I use for my NVIDIA gpu so
+make sure to follow the installation instructions on the guide
+for proprietary drivers if needed.
+
+### X11
+* xorg-minimal
+* xorg-fonts
+* xorg-video-drivers (if no NVIDIA driver)
+* xf86-input-* (just take all of them)
+* xinit
+* xdg-desktop-portal-gtk
+* noto-fonts-ttf
+* noto-fonts-cjk
+* font-awesome (v4)
+* lightdm
+* lightdm-gtk3-greeter
+* i3
+* i3lock
+* i3status-rust
+* xterm (if you don't plan to install another terminal immediately)
+* rofi
+
+Before restarting edit `/etc/lightdm/lightdm.conf` and replace `example-gtk-gnome`
+```
+  greeter-session=lightdm-gtk-greeter
+```
+for more info on lightdm refer to the Arch wiki
+
+Then edit `/etc/lightdm/Xsession` and change the last line to include
+`dbus-run-session`
+```
+  exec dbus-run-session "$@"
+```
+
+> # [Warning]($block.attrs('warning'))
+> This doesn't seem to be the correct solution as occasioanly
+> when updating `etc/lightdm/Xsession` is reset and you lose
+> your dbus session. 
+
+
+### Wayland
+* sway
+* greetd
+* gtkgreetd
+* kanshi
+
+### Audio
+* pipewire (configuration needed check guide)
+* pipewire-pulse (configuration needed check guide)
+* alsa-ucm-conf
+* sof-firmware
+
+### General Software (Not X11/Wayland specific)
+* firefox
+* ghostty
+* git
+* keychain
+* yadm
+
+This software will allow you to clone your dotfiles and
+start setting up your install to how you like it.
+
+## Extras
+If planning to install non-free software from the void repository,
+make sure to add the non-free repo.
+```
+  # xbps-install -S void-repo-nonfree
+```
+
+If planning to run 32bit applications also install
+```
+  # xbps-install -S void-repo-multilib
+  # xbps-install -S void-repo-multilib-nonfree (if nonfree is needed)
+```
+
+## Troubleshooting
+
+### Boot entry disappeared
+May happen if you have windows duel booted, especially if windows spins
+and crashes while trying to update. 
+
+If you have a secondary boot installation
+(i.e. grub on anouther disk that has the void boot)
+use that to boot, otherwise use a live environment.
+
+Then execute
+```
+  # sudo efibootmgr --create --disk /dev/nvme0n1p2 --part 1 \
+  --loader '\boot\efi\EFI\void_grub\grubx64.efi' --label "void"
+```
+This may require you to regenerate the grub file through grub-install or somehow else aquire it.
+This worked for me since it was still alive on the the efi partition of anouther disk (sda2)

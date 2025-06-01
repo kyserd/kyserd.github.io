@@ -1,0 +1,70 @@
+---
+.title = "Hardening Firefox",
+.date = @date("2025-05-09T00:00:00"),
+.author = "kyserd",
+.layout = "post.shtml",
+.draft = false,
+---
+
+Firefox hardening and extensions I use.
+
+## What I currently use
+ - [BetterFox](https://github.com/yokoffing/Betterfox): Better defaults
+ - [uBlock Origin](https://ublockorigin.com/): Ad/malicous website blocking
+ - [LeechBlock NG](https://github.com/proginosko/LeechBlockNG): Time limit on websites prone to time wasting (e.g Youtube)
+
+## BetterFox overrides
+```js
+/****************************************************************************
+ * START: MY OVERRIDES                                                      *
+****************************************************************************/
+// visit https://github.com/yokoffing/Betterfox/wiki/Common-Overrides
+// visit https://github.com/yokoffing/Betterfox/wiki/Optional-Hardening
+// Enter your personal overrides below this line:
+// PREF: disable login manager
+user_pref("signon.rememberSignons", false);
+
+// PREF: disable address and credit card manager
+user_pref("extensions.formautofill.addresses.enabled", false);
+user_pref("extensions.formautofill.creditCards.enabled", false);
+
+// PREF: enable HTTPS-Only Mode
+// Warn me before loading sites that don't support HTTPS
+// in both Normal and Private Browsing windows.
+user_pref("dom.security.https_only_mode", true);
+user_pref("dom.security.https_only_mode_error_page_user_suggestions", true);
+
+// PREF: disable captive portal detection
+// [WARNING] Do NOT use for mobile devices!
+user_pref("captivedetect.canonicalURL", ""); 
+user_pref("network.captive-portal-service.enabled", false); 
+user_pref("network.connectivity-service.enabled", false);
+
+// PREF: hide site shortcut thumbnails on New Tab page
+user_pref("browser.newtabpage.activity-stream.feeds.topsites", false);
+
+// PREF: hide weather on New Tab page
+user_pref("browser.newtabpage.activity-stream.showWeather", false);
+
+// PREF: hide dropdown suggestions when clicking on the address bar
+user_pref("browser.urlbar.suggest.topsites", false);
+
+// PREF: hide site shortcut thumbnails on New Tab page
+user_pref("browser.newtabpage.activity-stream.feeds.topsites", false);
+
+// PREF: hide weather on New Tab page
+user_pref("browser.newtabpage.activity-stream.showWeather", false);
+
+// PREF: hide dropdown suggestions when clicking on the address bar
+user_pref("browser.urlbar.suggest.topsites", false);
+
+// PREF: enforce certificate pinning
+// [ERROR] MOZILLA_PKIX_ERROR_KEY_PINNING_FAILURE
+// 1 = allow user MiTM (such as your antivirus) (default)
+// 2 = strict
+user_pref("security.cert_pinning.enforcement_level", 2);
+```
+
+
+## Useful Links
+- https://jm42.github.io/compare-user.js/: A website comparing different `user.js` offerings.
