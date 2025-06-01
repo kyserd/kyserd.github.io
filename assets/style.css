@@ -47,6 +47,16 @@ nav {
   margin-bottom: 20px;
 }
 
+.warning {
+  border-color: #CCCC49 !important;
+}
+
+.warning h1 {
+  border-color: #CCCC49 !important;
+  background-color: #CCCC49 !important;
+  color: #111 !important;
+}
+
 .block {
   border: 1px dotted white;
   padding: 5px 15px;

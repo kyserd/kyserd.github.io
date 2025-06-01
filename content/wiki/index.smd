@@ -6,13 +6,11 @@
 .draft = false,
 ---
 
-I would hesitate to call these assorted writings tutorials. They are more so a
-way for me to write down the steps and decisions I make when installing something,
-helpful links I come across, or how I fix things.
+Less like blog posts and more like notes and tutorials I leave behind
+for myself.
 
-Too often I forget exactly how I manged to do something and then can't recreate it.
-While not offering the same reproducibility of something like NixOS, the hope is
-that my setup becomes more consistant across all my different computers and is
-easier to keep organized.
-
-As always, these "tutorials" come with absolutely no warrenty of any kind.
+> # [Warning! - Not Real Tutorials]($block.attrs('warning'))
+> These are meant for me, so I can reproduce some of
+> my own steps when I go to work on something. A lot of
+> what is in these wiki pages is personal to my machine and
+> install and thus may not work for you!

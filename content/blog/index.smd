@@ -12,5 +12,3 @@
 --- 
 
 This blog has an [RSS feed]($link.alternative('rss')).
-
-[(btw syntax highlighting is done statically in Zine, no need for javascript libraries, unless you want to)]($text.attrs('small'))

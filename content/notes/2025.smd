@@ -1,38 +1,26 @@
 ---
-.title = "Notes - 1990",
-.date = @date("1990-01-01T00:00:00"),
-.author = "Sample Author",
+.title = "Notes - 2025",
+.date = @date("2025-01-01T00:00:00"),
+.author = "kyserd",
 .layout = "notes.shtml",
 .draft = false,
 --- 
 []($section.id('about'))
-## About this Devlog
+## About Notes
 
-This is where you should describe to your users what your devlog is about.
-Refer to the corresponding section in the home page to learn more about devlogs.
+Notes are where micro snippet like posts go. But it is very likely that
+this part of the website will get culled for not being used.
 
-For example this is how the Zine devlog describes itself:
+You can [subscribe to this page via RSS]($link.page('notes').alternative('rss')).
 
-> This is a non-exhaustive, curated list of changes meant to help users quickly see what has improved since they last checked.
->
-> You can [subscribe to this page via RSS]($link.page('notes').alternative('rss')).
->
-> This page lists entries for the current year, for past entries consult the
-[devlog archive](/notes/).
-
-Feel free to tweak it to your specific use case or replace it entirely as you
-see fit.
-
-Regardless of what you decide, you might want to make sure you preserve the
-links to the RSS feed and to the devlog archive from the copy above.
+This page lists entries for the current year, for past entries consult the
+[notes archive](/notes/).
 
 
-## [Third Entry]($section.id("1990-01-03T00:00:00"))
-This is the third entry.
+## [Notes not devlog]($section.id("2025-05-31T00:00:00"))
+In the default configuration this page is meant to be a devlog,
+which I think it does quite well. If this was a website for an actual
+product I'd quite enjoy using it.
 
-## [Second Entry]($section.id("1990-01-02T00:00:00"))
-This is the second entry.
-
-## [Hello Zine]($section.id("1990-01-01T00:00:00"))
-This is the first entry in this year's devlog created with
-[Zine](https://zine-ssg.io)!
+But since it is not I've decided to adept it to a micro blogging format.
+However it remains to be seen whether or not I actually will use it.
