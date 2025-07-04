@@ -1,6 +1,6 @@
 ---
 .title = "XOR Strings in Zig",
-.date = @date("2025-06-01T00:00:00"),
+.date = @date("2025-07-04T00:00:00"),
 .author = "kyserd",
 .layout = "post.shtml",
 .draft = false,
@@ -16,10 +16,87 @@ and in C++ it was done through constexpr.
 
 This seemed like a perfect usecase for Zig's `comptime`. I only had a few requirements,
 
-> 1. Reproducible: Obfuscating the same bytes should produce the same result, i.e. a mapping.
+> 1. Reproducible: Obfuscating the same bytes should produce the same result, so thats builds are consistant.
 >
 > 2. The key used the obfuscate the strings should not be hardcoded. (Why? I felt like it).
 
+This is what we want our top level creation function to look like, note the comptime
+function call to guarantee comptime evaluation of `Encrypted.init()`
+```zig
+pub fn encrypted(comptime string: []const u8) Encrypted(string.len) {
+    return comptime Encrypted(string.len).init(string);
+}
+```
+
+The actual struct is rather simple, simply storing the string and its hash
+```zig
+pub fn Encrypted(bytes: comptime_int) type {
+    return struct {
+        buffer: [bytes]u8,
+        hash: u64,
+
+        const Self = @This();
+    }
+}
+```
+
+To init the struct we need to, get a hash, a key, and then xor the bytes.
+Utilizing a prng seeded by the hash both allows for both uniqueness and reproducibility.
+```zig
+fn get_key(hash: u64) [bytes]u8 {
+    var key = [_]u8{0} ** bytes;
+    var rng = std.Random.DefaultPrng.init(hash);
+    const random = rng.random();
+    std.Random.bytes(random, &key);
+    return key;
+}
+
+pub fn init(comptime string: []const u8) Self {
+    if (string.len != bytes) {
+        @compileError("String length must match byte length!");
+    }
+    const hash = std.hash.Fnv1a_64.hash(string);
+    const key = get_key(hash);
+    comptime var self: Self = undefined;
+    self.hash = hash;
+
+    for (key, string, &self.buffer) |k, s, *v| {
+        v.* = k ^ s;
+    }
+    return self;
+}
+```
+
+Now we just need to decypt the data. While we can gaurentee that the decypt call won't be compile time evaluated,
+if compiling with optimizations you will need to fight the LLVM optimizer. It likes to constant fold the decryption
+away. Arguably this is usally good, but in this specific case it is not. To stump LLVM's optimizer we can do some raw pointer
+offsetting and casting to get prevent the code from being constant folded. Does it make it way harder to read? Yeah, but it works.
+```zig
+pub fn decrypt(self: *Self) []u8 {
+    if (@inComptime()) {
+        @compileError("decrypt should not be comptime evaluated");
+    }
+
+    // This is to stump the llvm optimizer
+    const offset_b = @offsetOf(Self, "buffer");
+    const offset_h = @offsetOf(Self, "hash");
+    
+    var ptr = @as(usize, @intFromPtr(self));
+    ptr += offset_b;
+    
+    const b = @as(*@TypeOf(self.buffer), @ptrFromInt(ptr));
+    ptr += offset_h;
+    ptr -= offset_b;
+    const h = @as(*@TypeOf(self.hash), @ptrFromInt(ptr));
+    
+    const key = get_key(h.*);
+    
+    for (key, b) |k, *v| {
+        v.* = k ^ v.*;
+    }
+    return b;
+}
+```
 
 ## Full Code
 ```zig
@@ -55,7 +132,7 @@ pub fn Encrypted(bytes: comptime_int) type {
             return self;
         }
 
-        pub fn decrypt(self: *const Self, buffer: *[bytes]u8) void {
+        pub fn decrypt(self: *Self) []u8 {
             if (@inComptime()) {
                 @compileError("decrypt should not be comptime evaluated");
             }
@@ -67,21 +144,22 @@ pub fn Encrypted(bytes: comptime_int) type {
             var ptr = @as(usize, @intFromPtr(self));
             ptr += offset_b;
 
-            const b = @as(*const @TypeOf(self.buffer), @ptrFromInt(ptr));
+            const b = @as(*@TypeOf(self.buffer), @ptrFromInt(ptr));
             ptr += offset_h;
             ptr -= offset_b;
-            const h = @as(*const @TypeOf(self.hash), @ptrFromInt(ptr));
+            const h = @as(*@TypeOf(self.hash), @ptrFromInt(ptr));
 
             const key = get_key(h.*);
 
-            for (key, b, buffer) |k, s, *v| {
-                v.* = k ^ s;
+            for (key, b) |k, *v| {
+                v.* = k ^ v.*;
             }
+            return b;
         }
     };
 }
 
 pub fn encrypted(comptime string: []const u8) Encrypted(string.len) {
-    return Encrypted(string.len).init(string);
+    return comptime Encrypted(string.len).init(string);
 }
 ```
