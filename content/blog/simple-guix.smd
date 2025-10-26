@@ -1,0 +1,96 @@
+---
+.title = "Simple Guix Home Configuration",
+.date = @date("2025-10-26T00:00:00"),
+.author = "kyserd",
+.layout = "post.shtml",
+.draft = false,
+---
+
+I've been interested in NixOS for a while now. The idea of being able to declare packages and my system has always been something that excited me.
+Too often do I end up installing a new system, spending some time setting it up, encountering an issue that takes a lot of googling and time to fix,
+and using the system for around a year before it starts falling apart and then doing this whole charade over again. Having a declaritive system would
+be the cure for the disease that is my bad desicion making. 
+
+I am also however, not interested in making more problems for myself. Theoretically if I was a Nix wizard, this would not be a problem, I would be able
+to bend every FHS conforming program to my will and live in a perfectly declaritive world. I am not a Nix wizard and I unfortunately do not have the time
+to become one. What I'm interested in is something that will save me more time down the line then the problems it/I will create. To be frank I want something
+that just works, but with Linux that unfortunately is rarely the case.
+
+So I've been exploring other systems and tools that can help me achieve this goal. The Universal Blue project piqued my interest, but my first experience with it
+was marred by this Wayland bug: https://gitlab.freedesktop.org/drm/amd/-/issues/2967. Not the Universal Blue project's fault, but when my first experience booting
+the system is having my monitor start having a seizure it has already created more problems that it has solved. I'll definitly give it another shot sometime soon,
+but for the moment I've been looking elsewhere. That elsewhere has been Guix.
+
+Now to be clear, I'm not talking about the Guix-SD (the Guix NixOS equivilant), but just Guix on-top of an already installed Linux distro. The sole reason for giving
+Guix layered on another system a try first compared to layered Nix is that I don't understand the Nix language and trying to understand it made my head hurt. I'd much
+rather learn a Lisp like Guile which is more likely to let me leverage my previous programming experience.
+
+Also the whole flakes debacle did not help when I was trying to get a bare minimum reproducible setup going. I have no horse in the flake race,
+but boy did I get desicion paralysis trying to figure out if I should use them or not.
+
+So I had one goal with Guix, a declarative setup that let me install packages on another Linux system for my user, preferably using home-environment. It took a fair bit of
+reading, but I managed to create a simple Guix Home base for installing and pinning packages. The resources that helped the most with this were:
+- https://guix.gnu.org/manual/
+- https://systemcrafters.net/craft-your-system-with-guix/
+- https://codeberg.org/guix/guix/issues/431#issuecomment-5528810
+
+The setup I ended up with looked like this:
+```
+~/dotfiles/
+├── .config
+│   └── guix
+│       ├── channels-lock.scm
+│       └── channels.scm
+├── home
+│   └── home-config.scm
+└── justfile  
+```
+
+To get the `channels.scm` to begin with you can just do `guix describe --format=channels > ~/dotfiles/.config/guix/channels.scm`, just make sure you delete the commit inforamation afterwards!
+The commit tags will be living in `channels-lock.scm` instead.
+
+Only three Guix files and a justfile for ease of use. The justfile simply provided an easy way to update and pull the guix channel and a way to build and switch the home manager.
+```make
+guix-profile := `guix time-machine -C .config/guix/channels-lock.scm`    
+guix := guix-profile / "bin/guix"
+
+list:
+    @just --list
+
+guix-update:
+    {{guix}} time-machine -C .config/guix/channels.scm -- describe --format=channels > .config/guix/channels-lock.scm
+
+guix-pull:
+    {{guix}} pull -C .config/guix/chanels-lock.scm
+
+home-build:
+    {{guix}} home build home/home-config.scm
+
+home-switch:
+    {{guix}} home reconfigure home/home-config.scm
+
+stow:
+    stow --target ~/.config .config
+```
+
+This is all that is needed to achieve pinned channels in Guix! The genius is the use of time-machine, when we pass it the `channels-lock.scm`, it uses the pinned channels, but when we pass
+it the unpinned `channels.scm`, it will default to the latest commit thus updating those channels! Combined with a git repository you'll be able to reset your lock file to any previous version
+allowing for easy rollbacks in case something breaks.
+
+The home configuration is also very simple, it's probably not ideal and could be more "idiomatic" but it gets the job done
+```scheme
+(use-modules (gnu)
+             (gnu home))
+(home-environment
+  (packages (specifications-packages
+              (list "git"
+                    "tmux"
+                    "helix"
+                    "just"
+                    "fish"))))
+```
+
+That's it! That's all you need to get declaritive layered Guix packages on any Linux system. Having Guix installed also gives us easy access to `guix shell`! Want to use the justfile to
+build your home-environment but don't have it installed? Just do `guix shell --check just` and you'll be dropped into a shell with Just installed.
+
+Now there are still a few things that require atttention, one of which is the fact that layered Guix requires some special attention to LibC locales (as seen in https://systemcrafters.net/craft-your-system-with-guix/installing-the-package-manager/#setting-the-locale-correctly), but overall this simple base is all you need to get started!
