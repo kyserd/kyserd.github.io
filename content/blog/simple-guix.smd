@@ -82,7 +82,7 @@ The home configuration is also very simple, it's probably not ideal and could be
 (use-modules (gnu)
              (gnu home))
 (home-environment
-  (packages (specifications-packages
+  (packages (specifications->packages
               (list "git"
                     "tmux"
                     "helix"
