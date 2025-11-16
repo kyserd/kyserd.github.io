@@ -1,0 +1,39 @@
+---
+.title = "Simple Guix Home Configuration - Episode 2",
+.date = @date("2025-11-16T00:00:00"),
+.author = "kyserd",
+.layout = "post.shtml",
+.draft = false,
+---
+
+## Previous parts
+- [Part 1](/blog/simple-guix)
+
+## The Good
+I've been expirimenting with guix home for a little while in a strive to have a less brittle
+setup. It's overall been quite a pleasant expirience and I created a little [sample configuration](https://github.com/kyserd/guix-home-example)
+that makes it easy to bootstrap home on a new install.
+
+It's overall quite simple and with the help of guix shell has made it easy to self bootstrap.
+I can use configuratio tools like `stow` and `just` to make managing the install easier without
+having to create a seperate process for bootstrapping said tools. As soon as I can activate the pinned
+guix binary I can create temporary shells containing the exact versions of `stow` and `just` my system
+needs and then can use my already existing justfile to bootstrap the rest.
+
+## The Bad
+There is no bad but I just wanted to include section to make the section pun work :^)
+
+## The Ugly
+The bootstrapping in my opinion is super neat and I'd love to use this on my setups, but I've run into an issue which is
+unfortunatly a bit of a deal breaker. Guix is slow. Not slow to the point where I can't use it, but it takes longer to install then the
+OS itself. This is exacerbated by the fact that Guix 1.4.0, the latest release of Guix at the moment, doesn't support git redirects.
+Guix transitioned from Savannah to Codeberg this year and that greatly improved the useability. But since redirects aren't supported,
+one must update from Savannah first, which is unbearably slow.
+
+There was a [consensus](https://consensus.guix.gnu.org/gcd/005-regular-releases.html) reached within Guix to start with
+regular releases, which should hopefully solve or at least improve the speed problem. But until that happends, the dream
+of having a quick and reproducible setup I can use in VM's or on real hardware with Guix Home is dead.
+
+I don't plan to
+abandon Guix forever, but for the moment I will be investigating alternatives as I don't want to wait 10-15 minutes just to
+have 7 programs be installed and setup (especially if this is a one-shot VM instance).
