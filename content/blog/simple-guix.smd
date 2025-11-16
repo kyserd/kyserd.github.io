@@ -6,6 +6,11 @@
 .draft = false,
 ---
 
+## Other parts
+- [Part 2](/blog/simple-guix2)
+
+## Why Guix
+
 I've been interested in NixOS for a while now. The idea of being able to declare packages and my system has always been something that excited me.
 Too often do I end up installing a new system, spending some time setting it up, encountering an issue that takes a lot of googling and time to fix,
 and using the system for around a year before it starts falling apart and then doing this whole charade over again. Having a declaritive system would
