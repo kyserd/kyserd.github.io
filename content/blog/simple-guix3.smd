@@ -1,0 +1,60 @@
+---
+.title = "Why I choose mise - Guix/Nix Episode 3",
+.date = @date("2025-12-29T00:00:00"),
+.author = "kyserd",
+.layout = "post.shtml",
+.draft = false,
+---
+
+## Previous parts
+- [Part 1](/blog/simple-guix)
+- [Part 2](/blog/simple-guix2)
+
+So after my foray into guix I went and tried Nix to purely benifit from the faster download speeds and more
+frequent releases. My idea was that Nix may be fast enough that I could use it comfertably in VMs and
+setup new systems. Unfortunately that didn't work out that way.
+
+## My nix experience(s)
+Now to be honest this isn't my first experience with Nix/NixOS. I've messed around with NixOS before and while
+I was impressed the difficulty in figuring out how to use pins/lock files without flakes for even the basic
+system `configuration.nix` made me give up. For me what I was trying to was pretty basic, but somehow even
+multiple hours of googling didn't get me there. 
+
+So this time I decided to take the flake pill, just accept the compromises and try to work with them.
+After following a [great tutorial](https://github.com/Evertras/simple-homemanager) by Evertras. I was
+able to get my [bootstrappable setup](https://github.com/kyserd/nix-home-manager-example) example in
+Nix using home-manager and I was content.
+
+But I was using `nix-shell -p` to create a ephemeral shell and I either got a warning or read somewhere
+that `nix-shell -p` wasn't the prefered solution and that one should use the more modern `nix shell nixpkgs#...`
+instead. Now that seems simple... right? NO. Whenever I tried to use this new syntax I would get an error that
+nixpkgs is not found in the current directory. No amount of googling, finagling with channels, or blindly trusting
+the LLMs got me anywhere.
+
+So I gave up... why? Because if `nix shell` is the "better" (it may not be don't shoot me)
+then it should just work with minimal trial and error. But it didn't, so I gave up. On using Nix at least.
+
+## Enter mise
+Now to be transparent I didn't solely give up on Nix because of my `nix shell` curfuffle. I was planning to switch
+over to Bazzite as my main desktop OS because I wanted to have a non-frustrating Linux gaming experience. After using
+LACT to set my GPU and VRAM clockspeeds to high by default (which fixed the annoying screen seizure that my AMD graphics
+cards like to cause), my experience has been incredibly positive. As far as I'm concerned Bazzite has saved me a lot
+of time.
+
+Now Universal Blue (Bazzite's parent project) doesn't support Nix, because it doesn't play nicely with SELinux. I
+did not want to deal with the hassle of making my own custom Bazzite with Nix and Distrobox wasn't exactly the
+right fit for what I had in-mind. But I stumbled around [these dotfiles](https://github.com/rio/dotfiles) by Rio
+I saw a pretty impressive solution to the problem I wanted to address.
+
+Now while I didn't end up copying the dotfiles
+exactly, the use of mise along with a dotfiles manager to copy my setup around seemed like a great idea. Especially if
+I could create a simple bootstrapping script (similiar to what I did for Guix/Nix) that used mise as my launching
+point for installing everything else, including my dotfiles manager. 
+
+After reading through mises documentation I was impressed with how thorough the design and features of mise were. I was
+especially impressed by the attention to security enhancements and the ability to use lock files (they're currently an
+experimental feature at the time of writting but I've had a great time using them so far). Now I can use my preferred
+tools on basically any system and best of all... mise is fast.
+
+If you're also looking to try to set up reproducible dev tooling for yourself, or just wanna try it out, I would recommend
+mise. At least at the moment, maybe I'll end up writing a mise postmortum in a few months :^)
